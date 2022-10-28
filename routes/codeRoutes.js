@@ -35,18 +35,19 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     console.log(req.body)
-    let { name, lang, contents, meta, size } = req.body;
+    let { name, lang, contents, m, size, author } = req.body;
 
+    let meta = m.split(",")
     if (!name || !lang || !contents || !size) {
         return res.status(400).send("Required fields missing");
     }
 
     // let std_roll = req.session.user.rollno
-    const newStd = new Query({ name, lang, contents, meta, size });
-    await newStd.save();
+    const newCode = new Code({ name, lang, contents, meta, size, author });
+    const saved = await newCode.save();
 
-    if (savedStd) {
-        return res.status(200).json({ data: newStd })
+    if (saved) {
+        return res.status(200).json({ data: newCode })
         // res.render('success', {roll:savedStd._id});
     }
     else {

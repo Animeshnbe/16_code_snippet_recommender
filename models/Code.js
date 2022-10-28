@@ -22,7 +22,11 @@ const CodeSchema = new Schema({
     size: {
         type: Number,
         required: true
-    },    
+    },
+    author: {
+        type: String,
+        required: false
+    }    
     // is_correct: {
     //     type: Boolean,
     //     required: false
