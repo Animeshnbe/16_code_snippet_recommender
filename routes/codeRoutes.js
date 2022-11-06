@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
         let queries
         // const newCode = new Code({name:"test.py",lang:"python",contents:"print(\"Hello World\")",meta:m,size:1});
         // await newCode.save();
-        queries = await Code.find({ meta: { "$regex": search, "$options": "i" } }).sort({updatedAt:-1});
+        queries = await Code.find({ meta: { "$regex": search, "$options": "i" }, is_correct:true }).sort({updatedAt:-1});
 
         if(!queries.length){
             return res.status(204).json({ data: "No queries exist..." })
@@ -56,24 +56,23 @@ router.post('/', async (req, res) => {
 })
 
 
-// router.put('/:id', async (req, res) => {
-//     const { ta_comment } = req.body;
+router.put('/:id', async (req, res) => {
+    let { rating, is_correct } = req.body;
 
-//     console.log(ta_comment)
-//     const existStd = await Query.findOne({ _id:req.params.id });
-//     if (!existStd) {
-//         return res.status(500).json({ msg: "Query doesn't exist..." });
-//     }
+    const existStd = await Code.findOne({ _id:req.params.id });
+    if (!existStd) {
+        return res.status(500).json({ msg: "Code snippet doesn't exist..." });
+    }
 
-//     const std = await Query.findByIdAndUpdate(existStd.id, { ta_comment, IsActive: false })
+    const std = await Code.findByIdAndUpdate(existStd.id, { rating, is_correct })
 
-//     if (std) {
-//         return res.status(200).json({ data: "Posted successfully" })
-//     }
-//     else {
-//         return res.status(500).json({ msg: "Couldn't update query" })
-//     }
-// })
+    if (std) {
+        return res.status(200).json({ data: "Updated successfully" })
+    }
+    else {
+        return res.status(500).json({ msg: "Couldn't update code review" })
+    }
+})
 
 
 module.exports = router

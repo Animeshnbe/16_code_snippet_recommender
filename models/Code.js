@@ -26,11 +26,15 @@ const CodeSchema = new Schema({
     author: {
         type: String,
         required: false
-    }    
-    // is_correct: {
-    //     type: Boolean,
-    //     required: false
-    // }
+    },
+    is_correct: {
+        type: Boolean,
+        required: false
+    },
+    rating: {
+        type: Number,
+        required: false
+    }
 });
 CodeSchema.index({name: 'text', content: 'text'});
 var collectionName = 'code_bank'
