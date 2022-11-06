@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
     }
 
     // let std_roll = req.session.user.rollno
-    const newCode = new Code({ name, lang, contents, meta, size, author });
+    const newCode = new Code({ name, lang, contents, meta, size, author, is_correct: true, rating: -1, count: 0  });
     const saved = await newCode.save();
 
     if (saved) {
@@ -64,7 +64,13 @@ router.put('/:id', async (req, res) => {
         return res.status(500).json({ msg: "Code snippet doesn't exist..." });
     }
 
-    const std = await Code.findByIdAndUpdate(existStd.id, { rating, is_correct })
+    let count = existStd.count;
+    let new_rating = rating
+    if (existStd.rating!=-1)
+        new_rating = (existStd.rating*count+rating)/count+1;
+
+    count++
+    const std = await Code.findByIdAndUpdate(existStd.id, { new_rating, is_correct, count })
 
     if (std) {
         return res.status(200).json({ data: "Updated successfully" })

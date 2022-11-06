@@ -34,6 +34,10 @@ const CodeSchema = new Schema({
     rating: {
         type: Number,
         required: false
+    },
+    count: {
+        type: Number,
+        required: false
     }
 });
 CodeSchema.index({name: 'text', content: 'text'});
