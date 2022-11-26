@@ -26,7 +26,12 @@ function pagelist(items) {
     return result;
   }
 
-router.get('/', async (req, res) => {
+
+router.get("/", function(req, res) {
+    res.sendFile('./index.html');
+  });
+
+router.get('/search', async (req, res) => {
     try {
         search = req.query.search
         let queries
@@ -38,11 +43,7 @@ router.get('/', async (req, res) => {
         if(!queries.length){
             return res.status(204).json({ data: "No queries exist..." })
         }
-          
-        queries.toArray(function(err, items) {
-            res.send(pagelist(items));
-        });
-        // res.sendFile(path.join(__dirname+'/index.html'));
+        
         return res.status(200).json({ data: queries })
     } catch (err) {
         console.log(err)
@@ -76,6 +77,8 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     let { rating, is_correct } = req.body;
+    console.log("Got ")
+    console.log(req.body)
 
     const existStd = await Code.findOne({ _id:req.params.id });
     if (!existStd) {
@@ -84,6 +87,7 @@ router.put('/:id', async (req, res) => {
 
     let count = existStd.count;
     let new_rating = rating
+
     if (existStd.rating!=-1)
         new_rating = (existStd.rating*count+rating)/count+1;
 
@@ -91,6 +95,7 @@ router.put('/:id', async (req, res) => {
     const std = await Code.findByIdAndUpdate(existStd.id, { new_rating, is_correct, count })
 
     if (std) {
+        console.log("Setting rating "+new_rating);
         return res.status(200).json({ data: "Updated successfully" })
     }
     else {
