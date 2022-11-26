@@ -47,7 +47,7 @@ app.use(
 
 // ROUTERS
 app.use('/api', loginRoutes)
-app.use('/index', codeRoutes)
+app.use('/code', codeRoutes)
 
 // START SERVER
 app.listen(port, () => {

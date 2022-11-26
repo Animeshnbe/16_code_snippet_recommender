@@ -1,6 +1,8 @@
 const Code = require('../models/Code')
 const express = require('express')
 const router = express.Router()
+const path = require('path')
+
 
 const isAlive = (req, res, next) => {
     if(req.session.user){
@@ -12,6 +14,17 @@ const isAlive = (req, res, next) => {
 
 
 // router.use(isAlive)
+function pagelist(items) {
+    result = "<html><body><ul>";
+    items.forEach(function(item) {
+      itemstring = "<li>" + item._id + "<ul><li>" + item.textScore +
+        "</li><li>" + item.created + "</li><li>" + item.document +
+        "</li></ul></li>";
+      result = result + itemstring;
+    });
+    result = result + "</ul></body></html>";
+    return result;
+  }
 
 router.get('/', async (req, res) => {
     try {
@@ -25,7 +38,11 @@ router.get('/', async (req, res) => {
         if(!queries.length){
             return res.status(204).json({ data: "No queries exist..." })
         }
-
+          
+        queries.toArray(function(err, items) {
+            res.send(pagelist(items));
+        });
+        // res.sendFile(path.join(__dirname+'/index.html'));
         return res.status(200).json({ data: queries })
     } catch (err) {
         console.log(err)
