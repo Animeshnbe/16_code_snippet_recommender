@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     var timeoutId = 0;
-    document.querySelector('#search').keypress(function (e) { 
+    $('#search').on('keyup', (e) => {
         clearTimeout(timeoutId); // doesn't matter if it's 0
         let results = JSON.parse(`{
             "data": [
