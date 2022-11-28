@@ -21,10 +21,10 @@ router.post('/register', async (req, res) => {
 
         newUser.password = hash
         const savedUserRes = await newUser.save()
-
+        const token = await newUser.generateAuthToken()
         if (savedUserRes){
             console.log("User saved")
-            return res.status(200).json({ msg: 'user is successfully saved' })
+            return res.status(200).json({ msg: 'user is successfully saved',token })
         }
     })
 })
@@ -50,10 +50,9 @@ router.post(`/login`, async (req, res) => {
         // req.session.save();
         
         const token = await user.generateAuthToken()
-        console.log(token)
         return res
             .status(200)
-            .json({ msg: 'You have logged in successfully', userSession }) // attach user session id to the response. It will be transfer in the cookies
+            .json({ msg: 'You have logged in successfully', token }) // attach user session id to the response. It will be transfer in the cookies
     } else {
         return res.status(400).json({ msg: 'Invalid credential' })
     }
