@@ -1,14 +1,30 @@
 const Code = require('../models/Code')
 const express = require('express')
+const jwt = require('jsonwebtoken')
 const router = express.Router()
 // const path = require('path')
 
 
 const isAlive = (req, res, next) => {
-    if(req.session.user){
-        next()
-        return
+    if (!req.headers.authorization)
+        return res.status(401).send("Unauthorized...");
+    const token = req.headers.authorization.split(' ')[1]; 
+    //Authorization: 'Bearer TOKEN'
+    if(!token){
+        return res.status(200).json({success:false, message: "Error! Token was not provided."});
     }
+    //Decoding the token
+    const decodedToken = jwt.verify(token,"thesecretcode" );
+    console.log(decodedToken)
+    let data = {userId:decodedToken.userId, email:decodedToken.email}
+    console.log(data)
+    next()
+    return
+
+    // if(req.session.user){
+    //     next()
+    //     return
+    // }
     return res.status(401).send("Unauthorized...");
 }
 
@@ -35,7 +51,6 @@ router.get("/", function(req, res) {
 router.get('/search', async (req, res) => {
     try {
         search = req.query.search
-        console.log(req.session)
         let queries
         // const newCode = new Code({name:"test.py",lang:"python",contents:"print(\"Hello World\")",meta:m,size:1});
         // await newCode.save();
