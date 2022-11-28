@@ -129,6 +129,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    var timeoutId = 0;
+    document.querySelector('#search').keypress(function (e) { 
+        clearTimeout(timeoutId); // doesn't matter if it's 0
+        timeoutId = setTimeout(() => {
+            console.log(e.target.value)
+            $.ajax({
+                type: "GET",
+                url: BACKEND_URI+'/code/search?search='+e.target.value,
+                success: (data) => {
+                    console.log(data)
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    alert("No results found!")
+                }
+            });
+        }, 900);
+        // Note: when passing a function to setTimeout, just pass the function name.
+        // If you call the function, like: getFilteredResultCount(), it will execute immediately.
+    });
+
     // document.querySelectorAll(".form__input").forEach(inputElement => {
     //     inputElement.addEventListener("blur", e => {
     //         if (e.target.id === "signupUsername" && e.target.value.length > 0 && e.target.value.length < 8) {

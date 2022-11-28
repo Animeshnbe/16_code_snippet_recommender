@@ -11,7 +11,7 @@
     <div id="nav">
     </div>
     <div class="container">
-        <form class="form" id="login" onsubmit="return false">
+        <form class="form" id="login">
             <!-- <div>
                 <ul id="listuser">
                   <h3> All users here: </h3>
@@ -61,8 +61,31 @@
         </form>
     </div>
     <div class="search-page" style="display: none;">
-        Search Page
-        <button class="form__button" id="logout">Logout</button>
+        <div class="head">
+            <h1>Search Page</h1>
+            <button onclick="document.getElementById('ide').style.display='block'" class="btn"> Submit Code </button>
+            <button class="btn" id="logout">Logout</button>
+        </div>
+        <div class="head">
+            <input id="search" type="text" placeholder="Search">
+        </div>
+        <div class="landing">
+            <div class="results">
+                scrollable results
+            </div>
+            <div class="preview">
+                single code
+
+            </div>
+        </div>
+        <div id="ide" class="modal" style="display: none;">
+            <form class="modal-content animate" action="localhost:3005/code" method="POST">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('ide').style.display='none'" class="close" title="Close Modal">&times;</span>
+                    <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
+                </div>
+            </form>
+        </div>
     </div>
     </form>
     <script src="index.js"></script>
