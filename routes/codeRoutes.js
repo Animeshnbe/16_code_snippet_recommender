@@ -1,7 +1,7 @@
 const Code = require('../models/Code')
 const express = require('express')
 const router = express.Router()
-const path = require('path')
+// const path = require('path')
 
 
 const isAlive = (req, res, next) => {
@@ -13,7 +13,8 @@ const isAlive = (req, res, next) => {
 }
 
 
-// router.use(isAlive)
+router.use(isAlive)
+
 function pagelist(items) {
     result = "<html><body><ul>";
     items.forEach(function(item) {
@@ -34,6 +35,7 @@ router.get("/", function(req, res) {
 router.get('/search', async (req, res) => {
     try {
         search = req.query.search
+        console.log(req.session)
         let queries
         // const newCode = new Code({name:"test.py",lang:"python",contents:"print(\"Hello World\")",meta:m,size:1});
         // await newCode.save();
@@ -77,8 +79,6 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     let { rating, is_correct } = req.body;
-    console.log("Got ")
-    console.log(req.body)
 
     const existStd = await Code.findOne({ _id:req.params.id });
     if (!existStd) {
