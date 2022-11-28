@@ -52,6 +52,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (uname){
         document.getElementsByClassName('container')[0].style.display = 'none';
         document.getElementsByClassName('search-page')[0].style.display = 'block';
+        $.ajax({
+            type: "GET",
+            url: BACKEND_URI+'/code/search?search=',
+            headers: {
+                'Authorization': 'Bearer '+sessionStorage.getItem('access')
+            },
+            success: (data) => {
+                console.log(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                if (jqXHR.status==403){
+                    alert("Session timed out!")
+                    sessionStorage.removeItem('email');
+                    sessionStorage.removeItem('access');
+                    window.location.reload()
+                }
+                else if (jqXHR.status==204)
+                    alert("No results found")
+                else
+                    alert("Internal Server Error")
+                // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
+            }
+        });
     }
     const loginForm = document.querySelector("#login");
     const createAccountForm = document.querySelector("#createAccount");
@@ -172,6 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
         //     $.ajax({
         //         type: "GET",
         //         url: BACKEND_URI+'/code/search?search='+e.target.value,
+        //         headers: {
+        //          'Authorization': 'Bearer '+,...
         //         success: (data) => {
         //             console.log(data)
         //         },
