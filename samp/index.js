@@ -132,19 +132,54 @@ document.addEventListener("DOMContentLoaded", () => {
     var timeoutId = 0;
     document.querySelector('#search').keypress(function (e) { 
         clearTimeout(timeoutId); // doesn't matter if it's 0
-        timeoutId = setTimeout(() => {
-            console.log(e.target.value)
-            $.ajax({
-                type: "GET",
-                url: BACKEND_URI+'/code/search?search='+e.target.value,
-                success: (data) => {
-                    console.log(data)
+        let results = JSON.parse(`{
+            "data": [
+                {
+                    "_id": "635c0ec92b964f09cd86dcec",
+                    "name": "test.py",
+                    "lang": "python",
+                    "contents": "print(\"Hello world\")",
+                    "meta": [
+                        "[\"dp\"]"
+                    ],
+                    "size": 1,
+                    "__v": 0,
+                    "count": 5,
+                    "is_correct": true,
+                    "rating": -1
                 },
-                error: function(jqXHR, textStatus, errorThrown){
-                    alert("No results found!")
+                {
+                    "_id": "635c101d68d42b910bc196d3",
+                    "name": "test.py",
+                    "lang": "python",
+                    "contents": "print(\"Hello world\")",
+                    "meta": [
+                        "dp",
+                        "greedy"
+                    ],
+                    "size": 1,
+                    "author": "",
+                    "__v": 0,
+                    "count": 0,
+                    "is_correct": true,
+                    "rating": -1
                 }
-            });
-        }, 900);
+            ]}`)
+
+            console.log(results);
+        // timeoutId = setTimeout(() => {
+        //     console.log(e.target.value)
+        //     $.ajax({
+        //         type: "GET",
+        //         url: BACKEND_URI+'/code/search?search='+e.target.value,
+        //         success: (data) => {
+        //             console.log(data)
+        //         },
+        //         error: function(jqXHR, textStatus, errorThrown){
+        //             alert("No results found!")
+        //         }
+        //     });
+        // }, 900);
         // Note: when passing a function to setTimeout, just pass the function name.
         // If you call the function, like: getFilteredResultCount(), it will execute immediately.
     });
