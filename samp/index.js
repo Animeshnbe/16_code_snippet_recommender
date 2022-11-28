@@ -1,7 +1,6 @@
 var username = document.getElementById('uname').value;
 var password = document.getElementById('psw').value;
 const BACKEND_URI = "http://localhost:3005"
-sessionStorage.setItem("currentLoggedIn",username);
 
 function Login()
 {
@@ -49,6 +48,11 @@ function clearInputError(inputElement) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const uname = sessionStorage.getItem('email');
+    if (uname){
+        document.getElementsByClassName('container')[0].style.display = 'none';
+        document.getElementsByClassName('search-page')[0].style.display = 'block';
+    }
     const loginForm = document.querySelector("#login");
     const createAccountForm = document.querySelector("#createAccount");
 
@@ -64,10 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
         createAccountForm.classList.add("form--hidden");
     });
 
+    document.querySelector("#logout").addEventListener("click", e => {
+        sessionStorage.removeItem('email');
+        sessionStorage.removeItem('access');
+        window.location.reload(true)
+    });
+
     createAccountForm.addEventListener("submit", e => {
         e.preventDefault();
         let pwd = document.getElementById('password').value
         let cpwd = document.getElementById('confirmp').value
+        let uname = document.getElementById('email').value
         if (pwd!=cpwd){
             setFormMessage(createAccountForm, "error", "Password doesn't match");
             return
@@ -75,12 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
         $.ajax({
             type: "POST",
             url: BACKEND_URI+'/api/register',
-            data: JSON.stringify({email:document.getElementById('email').value,password:pwd}),
+            data: JSON.stringify({email:uname,password:pwd}),
             success: (data) => {
-                // console.log(textStatus + ": " + jqXHR.status);
-                // console.log(response);
-                document.cookie = `access=${data.token}; max-age=${60 * 60}`
+                document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
                 sessionStorage.setItem("access",data.token);
+                sessionStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
             },
@@ -96,7 +106,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loginForm.addEventListener("submit", e => {
         e.preventDefault();
-        setFormMessage(loginForm, "error", "Invalid username/password combination");
+        // setFormMessage(loginForm, "error", "Invalid username/password combination");
+        let pwd = document.getElementById('psw').value
+        let uname = document.getElementById('uname').value
+        $.ajax({
+            type: "POST",
+            url: BACKEND_URI+'/api/login',
+            data: JSON.stringify({email:uname,password:pwd}),
+            success: (data) => {
+                document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
+                sessionStorage.setItem("access",data.token);
+                sessionStorage.setItem("email",uname);
+                document.getElementsByClassName('container')[0].style.display = 'none';
+                document.getElementsByClassName('search-page')[0].style.display = 'block';
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert("Incorrect Password or Email!")
+                console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
+            },
+            dataType: "json",
+            contentType : "application/json"
+        });
     });
 
     // document.querySelectorAll(".form__input").forEach(inputElement => {
