@@ -118,7 +118,7 @@ router.put('/:id', async (req, res) => {
 
         if (existStd.rating!=-1){
             new_rating = (existStd.rating*count+new_rating)/(count+1);
-            console.log(existStd.rating*count,new_rating,count+1,new_rating)
+            // console.log(existStd.rating*count,new_rating,count+1,new_rating)
         }
     }
 
@@ -129,7 +129,7 @@ router.put('/:id', async (req, res) => {
     const std = await Code.findByIdAndUpdate(existStd.id, { "rating":new_rating, is_correct, count })
 
     if (std) {
-        console.log("Setting rating "+new_rating);
+        // console.log("Setting rating "+new_rating);
         return res.status(200).json({ data: "Updated successfully" })
     }
     else {

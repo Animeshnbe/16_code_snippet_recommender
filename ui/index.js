@@ -52,7 +52,7 @@ function like(id, val){
         type: "PUT",
         url: BACKEND_URI+'/code/'+id,
         headers: {
-            'Authorization': 'Bearer '+sessionStorage.getItem('access')
+            'Authorization': 'Bearer '+localStorage.getItem('access')
         },
         data: {rating:null, is_correct:val},
         success: (response) => {
@@ -66,8 +66,8 @@ function like(id, val){
         error: function(jqXHR, textStatus, errorThrown){
             if (jqXHR.status==403){
                 alert("Session timed out!")
-                sessionStorage.removeItem('email');
-                sessionStorage.removeItem('access');
+                localStorage.removeItem('email');
+                localStorage.removeItem('access');
                 window.location.reload()
             }
             else
@@ -97,7 +97,7 @@ function populateResults(searchKey) {
         type: "GET",
         url: BACKEND_URI+'/code/search?search='+searchKey,
         headers: {
-            'Authorization': 'Bearer '+sessionStorage.getItem('access')
+            'Authorization': 'Bearer '+localStorage.getItem('access')
         },
         success: (response) => {
             if (!response){
@@ -129,8 +129,10 @@ function populateResults(searchKey) {
                         newElem += `<span class="tag">${m}</span>`
                 })
 
-                newElem += '<p class="code"><span style="white-space: pre-line">'+n.contents.substring(0, 150)+'</span> \
-                    <button class="readmore" onclick=preview(`'+encodeURI(n.contents)+'`,`'+n._id+'`,'+n.is_correct+')>Show Code... </button> \
+                escaped_content = n.contents.replace('<','&lt')
+                escaped_content = escaped_content.replace('>','&gt')
+                newElem += '<p class="code"><span style="white-space: pre-line">'+escaped_content.substring(0, 150)+'</span> \
+                    <button class="readmore" onclick=preview(`'+encodeURI(escaped_content)+'`,`'+n._id+'`,'+n.is_correct+')>Show Code... </button> \
                 </p>\
                 </div>'
             })
@@ -139,8 +141,8 @@ function populateResults(searchKey) {
         error: function(jqXHR, textStatus, errorThrown){
             if (jqXHR.status==403){
                 alert("Session timed out!")
-                sessionStorage.removeItem('email');
-                sessionStorage.removeItem('access');
+                localStorage.removeItem('email');
+                localStorage.removeItem('access');
                 window.location.reload()
             }
             else if (jqXHR.status==204)
@@ -161,7 +163,7 @@ function rate(id) {
                 type: "PUT",
                 url: BACKEND_URI+'/code/'+id,
                 headers: {
-                    'Authorization': 'Bearer '+sessionStorage.getItem('access')
+                    'Authorization': 'Bearer '+localStorage.getItem('access')
                 },
                 data: {rating:parseInt(rating), is_correct:1},
                 success: (response) => {
@@ -175,8 +177,8 @@ function rate(id) {
                 error: function(jqXHR, textStatus, errorThrown){
                     if (jqXHR.status==403){
                         alert("Session timed out!")
-                        sessionStorage.removeItem('email');
-                        sessionStorage.removeItem('access');
+                        localStorage.removeItem('email');
+                        localStorage.removeItem('access');
                         window.location.reload()
                     }
                     else
@@ -191,7 +193,7 @@ function rate(id) {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    const uname = sessionStorage.getItem('email');
+    const uname = localStorage.getItem('email');
     if (uname){
         document.getElementsByClassName('container')[0].style.display = 'none';
         document.getElementsByClassName('search-page')[0].style.display = 'block';
@@ -214,8 +216,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.querySelector("#logout").addEventListener("click", e => {
-        sessionStorage.removeItem('email');
-        sessionStorage.removeItem('access');
+        localStorage.removeItem('email');
+        localStorage.removeItem('access');
         window.location.reload(true)
     });
 
@@ -234,8 +236,8 @@ document.addEventListener("DOMContentLoaded", () => {
             data: JSON.stringify({email:uname,password:pwd}),
             success: (data) => {
                 document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
-                sessionStorage.setItem("access",data.token);
-                sessionStorage.setItem("email",uname);
+                localStorage.setItem("access",data.token);
+                localStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
                 populateResults("")
@@ -261,8 +263,8 @@ document.addEventListener("DOMContentLoaded", () => {
             data: JSON.stringify({email:uname,password:pwd}),
             success: (data) => {
                 document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
-                sessionStorage.setItem("access",data.token);
-                sessionStorage.setItem("email",uname);
+                localStorage.setItem("access",data.token);
+                localStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
                 populateResults("")
@@ -286,13 +288,13 @@ document.addEventListener("DOMContentLoaded", () => {
         var lines = code.split("\n");
         var count = lines.length;
 
-        let data = {name:name,lang:lang,contents:code,m:meta,size:count,author:sessionStorage.getItem('email')}
+        let data = {name:name,lang:lang,contents:code,m:meta,size:count,author:localStorage.getItem('email')}
         console.log(data)
         $.ajax({
             type: "POST",
             url: BACKEND_URI+'/code',
             headers: {
-                'Authorization': 'Bearer '+sessionStorage.getItem('access')
+                'Authorization': 'Bearer '+localStorage.getItem('access')
             },
             data: JSON.stringify(data),
             success: (response) => {
