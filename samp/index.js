@@ -61,7 +61,7 @@ function like(id, val){
                 return
             }
             confirm("Updated Successfully")
-            populateResults("")
+            populateResults(document.getElementsByClassName('search')[0].value)
         },
         error: function(jqXHR, textStatus, errorThrown){
             if (jqXHR.status==403){
@@ -169,7 +169,7 @@ function rate(id) {
                     return
                 }
                 confirm("Updated Successfully")
-                populateResults("")
+                populateResults(document.getElementsByClassName('search')[0].value)
             },
             error: function(jqXHR, textStatus, errorThrown){
                 if (jqXHR.status==403){
