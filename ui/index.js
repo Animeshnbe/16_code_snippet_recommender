@@ -50,15 +50,53 @@ function like(id, val){
     });
 }
 
-function preview(contents,id,is_correct){
+function save(data,id,lang) {
+    // let data = document.querySelector(".prev-code > span").value;
+    var c = document.createElement("a");
+
+    let ext = ""
+    switch(lang){
+        case "python": ext = "py"
+            break;
+        case "c": ext = "c"
+            break;
+        case "c++": ext = "cpp"
+            break;
+        case "javascript": ext = "js"
+            break;
+        case "java": ext = "java"
+            break;
+        case "rust": ext = "rc"
+            break;
+        case "golang": ext = "go"
+            break;
+        case "ruby": ext = "rb"
+            break;
+        case "shell": ext = "sh"
+            break;
+        default:
+            ext = "txt"
+            break;
+    }
+    c.download = id+"_code."+ext;
+    
+    var t = new Blob([decodeURI(data)], {
+        type: "text/plain"
+    });
+    c.href = window.URL.createObjectURL(t);
+    c.click();
+}
+
+function preview(contents,id,is_correct,lang){
     window.scrollTo(0, 0);
     var body = ''
     if (!is_correct){
-        body = '<p style="color:red;font-size:smaller;">This code have been marked incorrect by some user(s).</p>'
+        body = '<p style="color:red;font-size:smaller;">This code has been marked incorrect by some user(s).</p>'
     }
     body += `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>
                         <hr/><div class="btn-group" style="float:right">
-                        <button class="btn react" onClick="like('${id}',1);" style="margin-left:0;"><i class="fa-solid fa-check"></i></button>
+                        <button class="btn" onClick="save('${contents}','${id}','${lang}');"><i class="fa-solid fa-download"></i> Download</button>
+                        <button class="btn react" onClick="like('${id}',1);"><i class="fa-solid fa-check"></i></button>
                         <button class="btn react" onClick="like('${id}',0);"><i class="fa-solid fa-xmark"></i></button>
                         <button class="btn" onClick="rate('${id}');"><i class="fa-solid fa-pencil"></i> Rate</button></div>`
     document.getElementsByClassName("preview")[0].innerHTML = body
@@ -84,9 +122,15 @@ function populateResults(searchKey) {
                 if ('author' in n)
                     auth = n.author
 
-                newElem += `<div class="card" id=${n._id} style="background-color: white">
-                  <h5 class='author'>Author: ${auth?auth:"Anonymous"}</h5>
-                  <h3 class="title">${n.name}</h3>`
+                if (n.is_correct){
+                    newElem += `<div class="card" id=${n._id} style="background-color: #eee">
+                    <h5 class='author'>Author: ${auth?auth:"Anonymous"}</h5>
+                    <h3 class="title">${n.name}</h3>`
+                } else {
+                    newElem += `<div class="card" id=${n._id} style="background-color: #ffbfbf">
+                    <h5 class='author'>Author: ${auth?auth:"Anonymous"}</h5>
+                    <h3 class="title" style="color: red">${n.name}</h3>`
+                }
 
                 if (n.rating == -1.00)
                     newElem += `<h6 class="desc" >${n.count} Views</h6>`
@@ -105,7 +149,7 @@ function populateResults(searchKey) {
                 escaped_content = n.contents.replace('<','&lt')
                 escaped_content = escaped_content.replace('>','&gt')
                 newElem += '<p class="code"><span style="white-space: pre-line">'+escaped_content.substring(0, 150)+'</span> \
-                    <button class="readmore" onclick=preview(`'+encodeURI(escaped_content)+'`,`'+n._id+'`,'+n.is_correct+')>Show Code... </button> \
+                    <button class="readmore" onclick=preview(`'+encodeURI(escaped_content)+'`,`'+n._id+'`,'+n.is_correct+',`'+n.lang+'`)>Show Code... </button> \
                 </p>\
                 </div>'
             })

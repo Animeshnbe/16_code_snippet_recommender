@@ -108,7 +108,8 @@ router.put('/:id', async (req, res) => {
     
     count++
     if (is_correct!=existStd.is_correct && existStd.count>20 && is_correct!=(new_rating>5))
-        is_correct = existStd.is_correct
+        is_correct = existStd.is_correct //not allowed to change marking
+
     const std = await Code.findByIdAndUpdate(existStd.id, { "rating":new_rating, is_correct, count })
 
     if (std) {
