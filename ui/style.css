@@ -94,7 +94,7 @@ h6 {
 }
 
 .search {
-    padding: 0.75rem;
+    padding: 0.75rem 0 0.7rem 2.25rem;
     box-sizing: border-box;
     border-radius: var(--border-radius);
     border: 1px solid #dddddd;
