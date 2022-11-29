@@ -8,14 +8,14 @@ function Login()
 // localStorage.setItem('all_users',JSON.stringify(a));
 
 // a=JSON.parse((localStorage.getItem("all_users")));
-a.push({name: username, password: password});
+// a.push({name: username, password: password});
 
-localStorage.setItem('name',JSON.stringify(a));
-for(let i=0; i<a.length; i++){
-   let li = document.createElement("li");
-   li.innerHTML=a[i]['name'];
-   document.getElementById("listuser").appendChild(li);
-}
+// localStorage.setItem('name',JSON.stringify(a));
+// for(let i=0; i<a.length; i++){
+//    let li = document.createElement("li");
+//    li.innerHTML=a[i]['name'];
+//    document.getElementById("listuser").appendChild(li);
+// }
 }
 
 const getCookie = name => {
@@ -47,34 +47,63 @@ function clearInputError(inputElement) {
     inputElement.parentElement.querySelector(".form__input-error-message").textContent = "";
 }
 
+function populateResults(searchKey) {
+    $.ajax({
+        type: "GET",
+        url: BACKEND_URI+'/code/search?search='+searchKey,
+        headers: {
+            'Authorization': 'Bearer '+sessionStorage.getItem('access')
+        },
+        success: (response) => {
+            data = response.data
+            var newElem = ""
+            data.forEach((n,j)=>{
+                let auth = "Anonymous"
+                if ('author' in n)
+                    auth = n.author
+
+                newElem += `<div class="card" id=${n._id} style="background-color: white">
+                  <h4 class='author'>Author: ${auth}</h4>
+                  <h1 class="title">${n.name}</h1>
+                  <h5 class="desc" >${n.count} Views</h5>
+                  <h5>Language: ${n.lang} </h5>`
+                  
+                n.meta.forEach((m,i) => {
+                    if (i>0)
+                        newElem += ` <span class="tag">${m}</span>`
+                    else
+                        newElem += `<span class="tag">${m}</span>`
+                })
+
+                newElem += `<p class="code"><span style="white-space: pre-line">${n.contents.substring(0, 150)}</span>
+                    <button class="readmore">Show Code... </button>
+                </p>
+                </div>`
+            })
+            document.getElementsByClassName("results")[0].innerHTML = newElem
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            if (jqXHR.status==403){
+                alert("Session timed out!")
+                sessionStorage.removeItem('email');
+                sessionStorage.removeItem('access');
+                window.location.reload()
+            }
+            else if (jqXHR.status==204)
+                alert("No results found")
+            else
+                alert("Internal Server Error")
+            // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const uname = sessionStorage.getItem('email');
     if (uname){
         document.getElementsByClassName('container')[0].style.display = 'none';
         document.getElementsByClassName('search-page')[0].style.display = 'block';
-        $.ajax({
-            type: "GET",
-            url: BACKEND_URI+'/code/search?search=',
-            headers: {
-                'Authorization': 'Bearer '+sessionStorage.getItem('access')
-            },
-            success: (data) => {
-                console.log(data)
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-                if (jqXHR.status==403){
-                    alert("Session timed out!")
-                    sessionStorage.removeItem('email');
-                    sessionStorage.removeItem('access');
-                    window.location.reload()
-                }
-                else if (jqXHR.status==204)
-                    alert("No results found")
-                else
-                    alert("Internal Server Error")
-                // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
-            }
-        });
+        populateResults("")
     }
     const loginForm = document.querySelector("#login");
     const createAccountForm = document.querySelector("#createAccount");
@@ -155,48 +184,48 @@ document.addEventListener("DOMContentLoaded", () => {
     var timeoutId = 0;
     $('#search').on('keyup', (e) => {
         clearTimeout(timeoutId); // doesn't matter if it's 0
-        let results = JSON.parse(`{
-            "data": [
-                {
-                    "_id": "635c0ec92b964f09cd86dcec",
-                    "name": "test.py",
-                    "lang": "python",
-                    "contents": "print(\"Hello world\")",
-                    "meta": [
-                        "[\"dp\"]"
-                    ],
-                    "size": 1,
-                    "__v": 0,
-                    "count": 5,
-                    "is_correct": true,
-                    "rating": -1
-                },
-                {
-                    "_id": "635c101d68d42b910bc196d3",
-                    "name": "test.py",
-                    "lang": "python",
-                    "contents": "print(\"Hello world\")",
-                    "meta": [
-                        "dp",
-                        "greedy"
-                    ],
-                    "size": 1,
-                    "author": "",
-                    "__v": 0,
-                    "count": 0,
-                    "is_correct": true,
-                    "rating": -1
-                }
-            ]}`)
+        // let results = JSON.parse(`{
+        //     "data": [
+        //         {
+        //             "_id": "635c0ec92b964f09cd86dcec",
+        //             "name": "test.py",
+        //             "lang": "python",
+        //             "contents": "print(\"Hello world\")",
+        //             "meta": [
+        //                 "[\"dp\"]"
+        //             ],
+        //             "size": 1,
+        //             "__v": 0,
+        //             "count": 5,
+        //             "is_correct": true,
+        //             "rating": -1
+        //         },
+        //         {
+        //             "_id": "635c101d68d42b910bc196d3",
+        //             "name": "test.py",
+        //             "lang": "python",
+        //             "contents": "print(\"Hello world\")",
+        //             "meta": [
+        //                 "dp",
+        //                 "greedy"
+        //             ],
+        //             "size": 1,
+        //             "author": "",
+        //             "__v": 0,
+        //             "count": 0,
+        //             "is_correct": true,
+        //             "rating": -1
+        //         }
+        //     ]}`)
 
-            console.log(results);
+            // console.log(results);
         // timeoutId = setTimeout(() => {
         //     console.log(e.target.value)
         //     $.ajax({
         //         type: "GET",
         //         url: BACKEND_URI+'/code/search?search='+e.target.value,
         //         headers: {
-        //          'Authorization': 'Bearer '+,...
+        //          'Authorization': 'Bearer '+,
         //         success: (data) => {
         //             console.log(data)
         //         },
