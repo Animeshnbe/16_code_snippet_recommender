@@ -88,7 +88,16 @@
                 <p>Type or Paste your code here...</p>
                 <form id="codeEditor" method="POST">
                     <input type="text" id="name" class="new" placeholder="Title?" required>
-                    <input type="text" id="lang" class="new" placeholder="language?" required>
+                    <select id="lang" class="new" placeholder="language?" required>
+                        <option value="python">Python</option>
+                        <option value="rust">Rust</option>
+                        <option value="c">C</option>
+                        <option value="c++">C++</option>
+                        <option value="java">Java</option>
+                        <option value="golang">Golang</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="javascript">Javascript</option>
+                    </select>
                     <input type="text" id="tags" class="new" placeholder="tags,comma separated">
                     <textarea cols="50" rows="20" required id="code"></textarea>
                     <button class="form__button" type="submit">Submit</button>
