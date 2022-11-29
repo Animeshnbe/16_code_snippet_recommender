@@ -2,33 +2,6 @@ var username = document.getElementById('uname').value;
 var password = document.getElementById('psw').value;
 const BACKEND_URI = "http://localhost:3005"
 
-function Login()
-{
- let a = new Array();
-// localStorage.setItem('all_users',JSON.stringify(a));
-
-// a=JSON.parse((localStorage.getItem("all_users")));
-// a.push({name: username, password: password});
-
-// localStorage.setItem('name',JSON.stringify(a));
-// for(let i=0; i<a.length; i++){
-//    let li = document.createElement("li");
-//    li.innerHTML=a[i]['name'];
-//    document.getElementById("listuser").appendChild(li);
-// }
-}
-
-const getCookie = name => {
-    const cookies = document.cookie.split(';')
-    for (let i = 0; i < cookies.length; i++) {
-      let c = cookies[i].trim().split('=')
-      if (c[0] === name) {
-        return decodeURIComponent(c[1])
-      }
-    }
-    return ''
-}
-
 function setFormMessage(formElement, type, message) {
     const messageElement = formElement.querySelector(".form__message");
 

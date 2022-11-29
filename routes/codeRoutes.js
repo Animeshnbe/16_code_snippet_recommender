@@ -36,23 +36,6 @@ const isAlive = (req, res, next) => {
 
 router.use(isAlive)
 
-function pagelist(items) {
-    result = "<html><body><ul>";
-    items.forEach(function(item) {
-      itemstring = "<li>" + item._id + "<ul><li>" + item.textScore +
-        "</li><li>" + item.created + "</li><li>" + item.document +
-        "</li></ul></li>";
-      result = result + itemstring;
-    });
-    result = result + "</ul></body></html>";
-    return result;
-  }
-
-
-router.get("/", function(req, res) {
-    res.sendFile('./index.html');
-  });
-
 router.get('/search', async (req, res) => {
     try {
         search = req.query.search
