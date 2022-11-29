@@ -78,6 +78,13 @@ body {
     min-height: 100px;
 }
 
+.prev-code {
+    font-family: monospace;
+    min-height: 100px;
+    font-size: medium;
+    padding: 1%;
+}
+
 .card {
     background-color: #eee !important;
     padding: 2%;

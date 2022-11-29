@@ -47,6 +47,11 @@ function clearInputError(inputElement) {
     inputElement.parentElement.querySelector(".form__input-error-message").textContent = "";
 }
 
+function preview(contents){
+    window.scrollTo(0, 0);
+    document.getElementsByClassName("preview")[0].innerHTML = `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>`
+}
+
 function populateResults(searchKey) {
     $.ajax({
         type: "GET",
@@ -57,7 +62,7 @@ function populateResults(searchKey) {
         success: (response) => {
             data = response.data
             var newElem = ""
-            data.forEach((n,j)=>{
+            data.forEach((n)=>{
                 let auth = "Anonymous"
                 if ('author' in n)
                     auth = n.author
@@ -75,10 +80,10 @@ function populateResults(searchKey) {
                         newElem += `<span class="tag">${m}</span>`
                 })
 
-                newElem += `<p class="code"><span style="white-space: pre-line">${n.contents.substring(0, 150)}</span>
-                    <button class="readmore">Show Code... </button>
-                </p>
-                </div>`
+                newElem += '<p class="code"><span style="white-space: pre-line">'+n.contents.substring(0, 150)+'</span> \
+                    <button class="readmore" onclick=preview(`'+encodeURI(n.contents)+'`)>Show Code... </button> \
+                </p>\
+                </div>'
             })
             document.getElementsByClassName("results")[0].innerHTML = newElem
         },
