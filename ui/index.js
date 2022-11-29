@@ -102,11 +102,11 @@ function preview(contents,id,is_correct,lang){
     document.getElementsByClassName("preview")[0].innerHTML = body
 }
 
-function populateResults(searchKey) {
+function populateResults(searchKey, page=1) {
     searchKey.replace('\\', '');
     $.ajax({
         type: "GET",
-        url: BACKEND_URI+'/code/search?search='+searchKey,
+        url: BACKEND_URI+'/code/search?search='+searchKey+'&page='+page,
         headers: {
             'Authorization': 'Bearer '+localStorage.getItem('access')
         },
@@ -115,6 +115,7 @@ function populateResults(searchKey) {
                 document.getElementsByClassName("results")[0].innerHTML = `<h3>No results found!</h3>`
                 return
             }
+            console.log(response)
             data = response.data
             var newElem = ""
             data.forEach((n)=>{
@@ -153,6 +154,12 @@ function populateResults(searchKey) {
                 </p>\
                 </div>'
             })
+
+            if (page>1)
+                newElem += '<button class="btn" onClick="populateResults(`'+searchKey+'`,'+(page-1)+');" title="Next"><i class="fa-solid fa-angle-left"></i> Previous</button>'
+            if (response.count > (page-1)*10+data.length)
+                newElem += '<button class="btn" onClick="populateResults(`'+searchKey+'`,'+(page+1)+');" title="Next">Next <i class="fa-solid fa-angle-right"></i></button>'
+            
             document.getElementsByClassName("results")[0].innerHTML = newElem
         },
         error: function(jqXHR, textStatus, errorThrown){

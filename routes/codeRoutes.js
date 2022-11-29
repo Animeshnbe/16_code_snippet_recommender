@@ -42,17 +42,21 @@ router.get('/search', async (req, res) => {
         let queries = []
         // const newCode = new Code({name:"test.py",lang:"python",contents:"print(\"Hello World\")",meta:m,size:1});
         // await newCode.save();
-        queries = await Code.find({ meta: { "$regex": search, "$options": "i" }}).sort({rating:-1,updatedAt:-1,is_correct:-1});
 
-        if(!queries.length){
-            return res.status(204).json({ data: "No queries exist..." })
+        const count = await Code.find({ meta: { "$regex": search, "$options": "i" }}).count()
+        if(!count){
+            return res.status(204).json({ data: "No code snippets exist..." })
         }
         
+        const limit = req.query.limit || 10;
+        const page = parseInt(req.query.page) || 1;
+
+        queries = await Code.find({ meta: { "$regex": search, "$options": "i" }}).sort({rating:-1,updatedAt:-1,is_correct:-1}).limit(limit).skip((page * limit) - limit);
         if (queries.length<=3){
             Code.updateMany({meta: { "$regex": search, "$options": "i" }, is_correct:true}, 
                 {$inc:{"count":1}});
         }
-        return res.status(200).json({ data: queries })
+        return res.status(200).json({ data: queries, count: count, page: page })
     } catch (err) {
         console.log(err)
         return res.status(500).send("Something went wrong!")
