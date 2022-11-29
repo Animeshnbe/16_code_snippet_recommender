@@ -93,12 +93,12 @@ function preview(contents,id,is_correct,lang){
     if (!is_correct){
         body = '<p style="color:red;font-size:smaller;">This code has been marked incorrect by some user(s).</p>'
     }
-    body += `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>
-                        <hr/><div class="btn-group" style="float:right">
-                        <button class="btn" onClick="save('${contents}','${id}','${lang}');" title="Download"><i class="fa-solid fa-download"></i></button>
-                        <button class="btn react" onClick="like('${id}',1);" title="Mark Correct"><i class="fa-solid fa-check"></i></button>
-                        <button class="btn react" onClick="like('${id}',0);" title="Mark Incorrect"><i class="fa-solid fa-xmark"></i></button>
-                        <button class="btn" onClick="rate('${id}');"><i class="fa-solid fa-pencil"></i> Rate</button></div>`
+    body += '<p class="prev-code"><span style="white-space: pre-line">'+decodeURI(contents)+'</span></p> \
+                        <hr/><div class="btn-group" style="float:right"> \
+                        <button class="btn" onClick="save(`'+contents+'`,`'+id+'`,`'+lang+'`);" title="Download"><i class="fa-solid fa-download"></i></button> \
+                        <button class="btn react" onClick="like(`'+id+'`,1);" title="Mark Correct"><i class="fa-solid fa-check"></i></button> \
+                        <button class="btn react" onClick="like(`'+id+'`,0);" title="Mark Incorrect"><i class="fa-solid fa-xmark"></i></button> \
+                        <button class="btn" onClick="rate(`'+id+'`);"><i class="fa-solid fa-pencil"></i> Rate</button></div>'
     document.getElementsByClassName("preview")[0].innerHTML = body
 }
 
