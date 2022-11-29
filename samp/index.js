@@ -156,33 +156,37 @@ function populateResults(searchKey) {
 function rate(id) {
     let rating = prompt("Enter your rating > ");
     if (rating){
-        $.ajax({
-            type: "PUT",
-            url: BACKEND_URI+'/code/'+id,
-            headers: {
-                'Authorization': 'Bearer '+sessionStorage.getItem('access')
-            },
-            data: {rating:parseInt(rating), is_correct:1},
-            success: (response) => {
-                if (!response){
-                    document.getElementsByClassName("results")[0].innerHTML = `<h3>Could not update, refresh the page!</h3>`
-                    return
+        if (parseInt(rating)<10 && parseInt(rating)>0){
+            $.ajax({
+                type: "PUT",
+                url: BACKEND_URI+'/code/'+id,
+                headers: {
+                    'Authorization': 'Bearer '+sessionStorage.getItem('access')
+                },
+                data: {rating:parseInt(rating), is_correct:1},
+                success: (response) => {
+                    if (!response){
+                        document.getElementsByClassName("results")[0].innerHTML = `<h3>Could not update, refresh the page!</h3>`
+                        return
+                    }
+                    confirm("Updated Successfully")
+                    populateResults(document.getElementsByClassName('search')[0].value)
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    if (jqXHR.status==403){
+                        alert("Session timed out!")
+                        sessionStorage.removeItem('email');
+                        sessionStorage.removeItem('access');
+                        window.location.reload()
+                    }
+                    else
+                        alert("Internal Server Error")
+                    // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
                 }
-                confirm("Updated Successfully")
-                populateResults(document.getElementsByClassName('search')[0].value)
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-                if (jqXHR.status==403){
-                    alert("Session timed out!")
-                    sessionStorage.removeItem('email');
-                    sessionStorage.removeItem('access');
-                    window.location.reload()
-                }
-                else
-                    alert("Internal Server Error")
-                // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
-            }
-        });
+            });
+        } else {
+            alert("Invalid rating, try again")
+        }
     }
 };
 

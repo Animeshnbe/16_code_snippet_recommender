@@ -113,10 +113,13 @@ router.put('/:id', async (req, res) => {
     if (!rating)
         new_rating = existStd.rating
     else{
-        new_rating = rating
+        new_rating = parseInt(rating)
+        // new_rating = rating
 
-        if (existStd.rating!=-1)
-            new_rating = (existStd.rating*count+rating)/(count+1);
+        if (existStd.rating!=-1){
+            new_rating = (existStd.rating*count+new_rating)/(count+1);
+            console.log(existStd.rating*count,new_rating,count+1,new_rating)
+        }
     }
 
     
