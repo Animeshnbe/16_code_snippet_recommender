@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="http://www.amitmerchant.com/electron-markdownify"><img src="https://raw.githubusercontent.com/Animeshnbe/code_snip_recommender/master/ui/eagle.svg" alt="Markdownify" width="200"></a>
+  <a href="https://github.com/Animeshnbe/code_snip_recommender">SSD Project Team 16</a>
   <br>
   Code Snippet Recommender
   <br>
@@ -59,7 +59,7 @@ $ node app.js
 
 ## Team UMetrix
 
-Team number 16, Mentor: Sai Anirudh Karri
+Team number 16, Mentor: Sai Anirudh Karri [@sai11101989]
 Members
 - Animesh Das
 - Venkatesh Ravada
