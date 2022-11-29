@@ -60,6 +60,10 @@ function populateResults(searchKey) {
             'Authorization': 'Bearer '+sessionStorage.getItem('access')
         },
         success: (response) => {
+            if (!response){
+                document.getElementsByClassName("results")[0].innerHTML = `<h3>No results found!</h3>`
+                return
+            }
             data = response.data
             var newElem = ""
             data.forEach((n)=>{
@@ -150,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
+                populateResults("")
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert("User already exists!")
@@ -176,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
+                populateResults("")
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert("Incorrect Password or Email!")
