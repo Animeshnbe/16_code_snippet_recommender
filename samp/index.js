@@ -77,17 +77,22 @@ function like(id, val){
     });
 }
 
-function preview(contents,id){
+function preview(contents,id,is_correct){
     window.scrollTo(0, 0);
-    var contents = `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>
+    var body = ''
+    if (!is_correct){
+        body = '<p style="color:red;font-size:smaller;">This code have been marked incorrect by some user(s).</p>'
+    }
+    body += `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>
                         <hr/><div class="btn-group" style="float:right">
-                        <button class="btn" onClick="like('${id}',1);" style="margin-left:0;"><i class="fa-regular fa-thumbs-up"></i></button>
-                        <button class="btn" onClick="like('${id}',0);"><i class="fa-regular fa-thumbs-down"></i></button>
+                        <button class="btn react" onClick="like('${id}',1);" style="margin-left:0;"><i class="fa-solid fa-check"></i></button>
+                        <button class="btn react" onClick="like('${id}',0);"><i class="fa-solid fa-xmark"></i></button>
                         <button class="btn" onClick="rate('${id}');"><i class="fa-solid fa-pencil"></i> Rate</button></div>`
-    document.getElementsByClassName("preview")[0].innerHTML = contents
+    document.getElementsByClassName("preview")[0].innerHTML = body
 }
 
 function populateResults(searchKey) {
+    searchKey.replace('\\', '');
     $.ajax({
         type: "GET",
         url: BACKEND_URI+'/code/search?search='+searchKey,
@@ -125,7 +130,7 @@ function populateResults(searchKey) {
                 })
 
                 newElem += '<p class="code"><span style="white-space: pre-line">'+n.contents.substring(0, 150)+'</span> \
-                    <button class="readmore" onclick=preview(`'+encodeURI(n.contents)+'`,`'+n._id+'`)>Show Code... </button> \
+                    <button class="readmore" onclick=preview(`'+encodeURI(n.contents)+'`,`'+n._id+'`,'+n.is_correct+')>Show Code... </button> \
                 </p>\
                 </div>'
             })

@@ -59,8 +59,7 @@ router.get('/search', async (req, res) => {
         let queries = []
         // const newCode = new Code({name:"test.py",lang:"python",contents:"print(\"Hello World\")",meta:m,size:1});
         // await newCode.save();
-        queries = await Code.find({ meta: { "$regex": search, "$options": "i" }, is_correct:true }).sort({rating:-1,updatedAt:-1});
-
+        queries = await Code.find({ meta: { "$regex": search, "$options": "i" }}).sort({rating:-1,updatedAt:-1,is_correct:-1});
 
         if(!queries.length){
             return res.status(204).json({ data: "No queries exist..." })

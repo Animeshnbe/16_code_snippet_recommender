@@ -81,6 +81,10 @@ h6 {
     touch-action: manipulation;
 }
 
+.react {
+    width: 30px;
+}
+
 .btn-group > button:hover{
     /* font-weight: bold; */
     font-size: 1rem;
