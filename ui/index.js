@@ -321,14 +321,11 @@ document.addEventListener("DOMContentLoaded", () => {
         //             "rating": -1
         //         }
         //     ]}`)
-
-            // console.log(results);
         timeoutId = setTimeout(() => {
             // console.log(e.target.value)
             populateResults(e.target.value)
+            document.getElementsByClassName("preview")[0].innerHTML = `<span style="float: right;color: grey;">Preview</span>`
         }, 900);
-        // Note: when passing a function to setTimeout, just pass the function name.
-        // If you call the function, like: getFilteredResultCount(), it will execute immediately.
     });
 
     var span = document.getElementsByClassName("close")[0];
