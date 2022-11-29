@@ -1,19 +1,13 @@
 
 <h1 align="center">
   <br>
-  <a href="http://www.amitmerchant.com/electron-markdownify"><img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.png" alt="Markdownify" width="200"></a>
+  <a href="http://www.amitmerchant.com/electron-markdownify"><img src="https://raw.githubusercontent.com/Animeshnbe/code_snip_recommender/master/ui/eagle.svg" alt="Markdownify" width="200"></a>
   <br>
   Code Snippet Recommender
   <br>
 </h1>
 
 <h4 align="center">An express-NodeJS app built on top of MongoDb to query code snippets.</h4>
-
-<p align="center">
-  <a href="https://courses.iiit.ac.in/mod/forum/discuss.php?d=29511">
-    <img src="../ui/eagle.svg" alt="Logo">
-  </a>  
-</p>
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
