@@ -47,9 +47,14 @@ function clearInputError(inputElement) {
     inputElement.parentElement.querySelector(".form__input-error-message").textContent = "";
 }
 
-function preview(contents){
+function preview(contents,id){
     window.scrollTo(0, 0);
-    document.getElementsByClassName("preview")[0].innerHTML = `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>`
+    var contents = `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>
+                        <hr/><div class="btn-group" style="float:right">
+                        <button class="btn" style="margin-left:0;"><i class="fa-regular fa-thumbs-up"></i></button>
+                        <button class="btn"><i class="fa-regular fa-thumbs-down"></i></button>
+                        <button class="btn" onClick="rate('${id}');"><i class="fa-solid fa-pencil"></i> Rate</button></div>`
+    document.getElementsByClassName("preview")[0].innerHTML = contents
 }
 
 function populateResults(searchKey) {
@@ -72,10 +77,15 @@ function populateResults(searchKey) {
                     auth = n.author
 
                 newElem += `<div class="card" id=${n._id} style="background-color: white">
-                  <h4 class='author'>Author: ${auth}</h4>
-                  <h1 class="title">${n.name}</h1>
-                  <h5 class="desc" >${n.count} Views</h5>
-                  <h5>Language: ${n.lang} </h5>`
+                  <h4 class='author'>Author: ${auth?auth:"Anonymous"}</h4>
+                  <h1 class="title">${n.name}</h1>`
+
+                if (n.rating == -1.00)
+                    newElem += `<h5 class="desc" >${n.count} Views</h5>`
+                else
+                    newElem += `<h5 class="desc" >${n.count} Views, ${n.rating.toFixed(2)} Rating</h5>`
+                  
+                newElem += `<h5>Language: ${n.lang} </h5>`
                   
                 n.meta.forEach((m,i) => {
                     if (i>0)
@@ -85,7 +95,7 @@ function populateResults(searchKey) {
                 })
 
                 newElem += '<p class="code"><span style="white-space: pre-line">'+n.contents.substring(0, 150)+'</span> \
-                    <button class="readmore" onclick=preview(`'+encodeURI(n.contents)+'`)>Show Code... </button> \
+                    <button class="readmore" onclick=preview(`'+encodeURI(n.contents)+'`,`'+n._id+'`)>Show Code... </button> \
                 </p>\
                 </div>'
             })
@@ -107,6 +117,40 @@ function populateResults(searchKey) {
     });
 }
 
+
+function rate(id) {
+    let rating = prompt("Enter your rating > ");
+    if (rating){
+        $.ajax({
+            type: "PUT",
+            url: BACKEND_URI+'/code/'+id,
+            headers: {
+                'Authorization': 'Bearer '+sessionStorage.getItem('access')
+            },
+            data: {rating:parseInt(rating), is_correct:1},
+            success: (response) => {
+                if (!response){
+                    document.getElementsByClassName("results")[0].innerHTML = `<h3>Could not update, refresh the page!</h3>`
+                    return
+                }
+                confirm("Updated Successfully")
+                populateResults("")
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                if (jqXHR.status==403){
+                    alert("Session timed out!")
+                    sessionStorage.removeItem('email');
+                    sessionStorage.removeItem('access');
+                    window.location.reload()
+                }
+                else
+                    alert("Internal Server Error")
+                // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
+            }
+        });
+    }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     const uname = sessionStorage.getItem('email');
     if (uname){
@@ -116,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const loginForm = document.querySelector("#login");
     const createAccountForm = document.querySelector("#createAccount");
+    const codeForm = document.querySelector("#codeEditor");
 
     document.querySelector("#linkCreateAccount").addEventListener("click", e => {
         e.preventDefault();
@@ -192,8 +237,42 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    codeForm.addEventListener("submit", e => {
+        e.preventDefault();
+        // setFormMessage(loginForm, "error", "Invalid username/password combination");
+        let meta = document.getElementById('tags').value  //.split(",")
+        let lang = document.getElementById('lang').value
+        let code = document.getElementById('code').value
+        let name = document.getElementById('name').value
+        var lines = code.split("\n");
+        var count = lines.length;
+
+        let data = {name:name,lang:lang,contents:code,m:meta,size:count,author:sessionStorage.getItem('email')}
+        console.log(data)
+        $.ajax({
+            type: "POST",
+            url: BACKEND_URI+'/code',
+            headers: {
+                'Authorization': 'Bearer '+sessionStorage.getItem('access')
+            },
+            data: JSON.stringify(data),
+            success: (response) => {
+                console.log("code submitted "+response)
+                var modal = document.getElementById("ide");
+                modal.style.display = "none";
+                populateResults("")
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert("Could not upload your code!")
+                console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
+            },
+            dataType: "json",
+            contentType : "application/json"
+        });
+    });
+
     var timeoutId = 0;
-    $('#search').on('keyup', (e) => {
+    $('.search').on('keyup', (e) => {
         clearTimeout(timeoutId); // doesn't matter if it's 0
         // let results = JSON.parse(`{
         //     "data": [
@@ -237,6 +316,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Note: when passing a function to setTimeout, just pass the function name.
         // If you call the function, like: getFilteredResultCount(), it will execute immediately.
     });
+
+    var span = document.getElementsByClassName("close")[0];
+    var modal = document.getElementById("ide");
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+    }
 
     // document.querySelectorAll(".form__input").forEach(inputElement => {
     //     inputElement.addEventListener("blur", e => {

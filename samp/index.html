@@ -5,7 +5,11 @@
     <title>Code recommender</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="./eagle.svg" sizes="any">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <script src="https://kit.fontawesome.com/285ed90c95.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 </head>
 <body>
@@ -68,7 +72,7 @@
             <button class="btn" id="logout">Logout</button>
         </div>
         <div class="head">
-            <input id="search" type="text" placeholder="Search">
+            <input class="search" type="text" placeholder="Search">
         </div>
         <div class="landing">
             <div class="results">
@@ -79,12 +83,17 @@
             </div>
         </div>
         <div id="ide" class="modal" style="display: none;">
-            <form class="modal-content animate" action="localhost:3005/code" method="POST">
-                <div class="imgcontainer">
-                    <span onclick="document.getElementById('ide').style.display='none'" class="close" title="Close Modal">&times;</span>
-                    <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
-                </div>
-            </form>
+            <div class="modal-content">
+                <span onclick="document.getElementById('ide').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <p>Type or Paste your code here...</p>
+                <form id="codeEditor" method="POST">
+                    <input type="text" id="name" class="new" placeholder="Title?" required>
+                    <input type="text" id="lang" class="new" placeholder="language?" required>
+                    <input type="text" id="tags" class="new" placeholder="tags,comma separated">
+                    <textarea cols="50" rows="60" required id="code"></textarea>
+                    <button class="form__button" type="submit">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
     </form>
