@@ -107,15 +107,15 @@ function populateResults(searchKey) {
                     auth = n.author
 
                 newElem += `<div class="card" id=${n._id} style="background-color: white">
-                  <h4 class='author'>Author: ${auth?auth:"Anonymous"}</h4>
-                  <h1 class="title">${n.name}</h1>`
+                  <h5 class='author'>Author: ${auth?auth:"Anonymous"}</h5>
+                  <h3 class="title">${n.name}</h3>`
 
                 if (n.rating == -1.00)
-                    newElem += `<h5 class="desc" >${n.count} Views</h5>`
+                    newElem += `<h6 class="desc" >${n.count} Views</h6>`
                 else
-                    newElem += `<h5 class="desc" >${n.count} Views, ${n.rating.toFixed(2)} Rating</h5>`
+                    newElem += `<h6 class="desc" >${n.count} Views, ${n.rating.toFixed(2)} Rating</h6>`
                   
-                newElem += `<h5>Language: ${n.lang} </h5>`
+                newElem += `<h6>Language: ${n.lang} </h6>`
                   
                 n.meta.forEach((m,i) => {
                     if (i>0)
@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             data: JSON.stringify(data),
             success: (response) => {
-                console.log("code submitted "+response)
+                alert("Code submitted successfully!")
                 var modal = document.getElementById("ide");
                 modal.style.display = "none";
                 populateResults("")
