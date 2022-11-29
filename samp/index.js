@@ -47,12 +47,42 @@ function clearInputError(inputElement) {
     inputElement.parentElement.querySelector(".form__input-error-message").textContent = "";
 }
 
+function like(id, val){
+    $.ajax({
+        type: "PUT",
+        url: BACKEND_URI+'/code/'+id,
+        headers: {
+            'Authorization': 'Bearer '+sessionStorage.getItem('access')
+        },
+        data: {rating:null, is_correct:val},
+        success: (response) => {
+            if (!response){
+                document.getElementsByClassName("results")[0].innerHTML = `<h3>Could not update, refresh the page!</h3>`
+                return
+            }
+            confirm("Updated Successfully")
+            populateResults("")
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            if (jqXHR.status==403){
+                alert("Session timed out!")
+                sessionStorage.removeItem('email');
+                sessionStorage.removeItem('access');
+                window.location.reload()
+            }
+            else
+                alert("Internal Server Error")
+            // console.log(textStatus + ": " + jqXHR.status + " " + errorThrown);
+        }
+    });
+}
+
 function preview(contents,id){
     window.scrollTo(0, 0);
     var contents = `<p class="prev-code"><span style="white-space: pre-line">${decodeURI(contents)}</span></p>
                         <hr/><div class="btn-group" style="float:right">
-                        <button class="btn" style="margin-left:0;"><i class="fa-regular fa-thumbs-up"></i></button>
-                        <button class="btn"><i class="fa-regular fa-thumbs-down"></i></button>
+                        <button class="btn" onClick="like('${id}',1);" style="margin-left:0;"><i class="fa-regular fa-thumbs-up"></i></button>
+                        <button class="btn" onClick="like('${id}',0);"><i class="fa-regular fa-thumbs-down"></i></button>
                         <button class="btn" onClick="rate('${id}');"><i class="fa-solid fa-pencil"></i> Rate</button></div>`
     document.getElementsByClassName("preview")[0].innerHTML = contents
 }

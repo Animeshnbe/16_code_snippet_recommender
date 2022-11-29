@@ -113,12 +113,14 @@ router.put('/:id', async (req, res) => {
     let new_rating = 0;
     if (!rating)
         new_rating = existStd.rating
-    else
+    else{
         new_rating = rating
 
         if (existStd.rating!=-1)
             new_rating = (existStd.rating*count+rating)/(count+1);
+    }
 
+    
     count++
     if (is_correct!=existStd.is_correct && existStd.count>20 && is_correct!=(new_rating>5))
         is_correct = existStd.is_correct
