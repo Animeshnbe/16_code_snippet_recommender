@@ -219,21 +219,10 @@ document.addEventListener("DOMContentLoaded", () => {
         //     ]}`)
 
             // console.log(results);
-        // timeoutId = setTimeout(() => {
-        //     console.log(e.target.value)
-        //     $.ajax({
-        //         type: "GET",
-        //         url: BACKEND_URI+'/code/search?search='+e.target.value,
-        //         headers: {
-        //          'Authorization': 'Bearer '+,
-        //         success: (data) => {
-        //             console.log(data)
-        //         },
-        //         error: function(jqXHR, textStatus, errorThrown){
-        //             alert("No results found!")
-        //         }
-        //     });
-        // }, 900);
+        timeoutId = setTimeout(() => {
+            // console.log(e.target.value)
+            populateResults(e.target.value)
+        }, 900);
         // Note: when passing a function to setTimeout, just pass the function name.
         // If you call the function, like: getFilteredResultCount(), it will execute immediately.
     });
