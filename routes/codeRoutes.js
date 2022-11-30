@@ -100,7 +100,7 @@ router.put('/:id', async (req, res) => {
     if (!rating)
         new_rating = existStd.rating
     else{
-        new_rating = parseInt(rating)
+        new_rating = parseFloat(rating)
         // new_rating = rating
 
         if (existStd.rating!=-1){

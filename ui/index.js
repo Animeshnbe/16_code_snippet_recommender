@@ -93,8 +93,10 @@ function preview(contents,id,is_correct,lang){
     if (!is_correct){
         body = '<p style="color:red;font-size:smaller;">This code has been marked incorrect by some user(s).</p>'
     }
-    body += '<p class="prev-code"><span style="white-space: pre-line">'+decodeURI(contents)+'</span></p> \
-                        <hr/><div class="btn-group" style="float:right"> \
+    body += '<p class="prev-code"><span style="white-space: pre-line">'+decodeURI(contents)+'</span></p>'
+
+    if (localStorage.getItem('email'))
+        body += '<hr/><div class="btn-group" style="float:right"> \
                         <button class="btn" onClick="save(`'+contents+'`,`'+id+'`,`'+lang+'`);" title="Download"><i class="fa-solid fa-download"></i></button> \
                         <button class="btn react" onClick="like(`'+id+'`,1);" title="Mark Correct"><i class="fa-solid fa-check"></i></button> \
                         <button class="btn react" onClick="like(`'+id+'`,0);" title="Mark Incorrect"><i class="fa-solid fa-xmark"></i></button> \
@@ -180,16 +182,16 @@ function populateResults(searchKey, page=1) {
 
 
 function rate(id) {
-    let rating = prompt("Enter your rating > ");
+    let rating = prompt("Enter your rating(0-10) > ");
     if (rating){
-        if (parseInt(rating)<10 && parseInt(rating)>0){
+        if (parseFloat(rating)<10 && parseFloat(rating)>0){
             $.ajax({
                 type: "PUT",
                 url: BACKEND_URI+'/code/'+id,
                 headers: {
                     'Authorization': 'Bearer '+localStorage.getItem('access')
                 },
-                data: {rating:parseInt(rating), is_correct:1},
+                data: {rating:parseFloat(rating), is_correct:1},
                 success: (response) => {
                     if (!response){
                         document.getElementsByClassName("results")[0].innerHTML = `<h3>Could not update, refresh the page!</h3>`
@@ -216,13 +218,25 @@ function rate(id) {
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+function toggleLogin(){
+    document.getElementsByClassName('search-page')[0].style.display = 'none'
+    document.getElementsByClassName('container')[0].style.display = 'block'
+}
+
+function landing(){
     const uname = localStorage.getItem('email');
+    populateResults("")
     if (uname){
-        document.getElementsByClassName('container')[0].style.display = 'none';
-        document.getElementsByClassName('search-page')[0].style.display = 'block';
-        populateResults("")
+        document.getElementById("welcome").innerText = "Welcome, "+uname.split('@')[0]
+        document.getElementById('d-btn').innerHTML = `<button onclick="document.getElementById('ide').style.display='block'" class="btn"> Submit Code </button>`
+    } else {
+        document.getElementById("welcome").innerText = "Home"
+        document.getElementById('d-btn').innerHTML = `<button onclick="toggleLogin()" class="btn"> Login </button>`
     }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    landing()
     const loginForm = document.querySelector("#login");
     const createAccountForm = document.querySelector("#createAccount");
     const codeForm = document.querySelector("#codeEditor");
@@ -259,12 +273,12 @@ document.addEventListener("DOMContentLoaded", () => {
             url: BACKEND_URI+'/api/register',
             data: JSON.stringify({email:uname,password:pwd}),
             success: (data) => {
-                document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
+                // document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
                 localStorage.setItem("access",data.token);
                 localStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
-                populateResults("")
+                landing()
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert("User already exists!")
@@ -286,12 +300,12 @@ document.addEventListener("DOMContentLoaded", () => {
             url: BACKEND_URI+'/api/login',
             data: JSON.stringify({email:uname,password:pwd}),
             success: (data) => {
-                document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
+                // document.cookie = `access=${encodeURIComponent(data.token)}; max-age=${60 * 60}`
                 localStorage.setItem("access",data.token);
                 localStorage.setItem("email",uname);
                 document.getElementsByClassName('container')[0].style.display = 'none';
                 document.getElementsByClassName('search-page')[0].style.display = 'block';
-                populateResults("")
+                landing()
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert("Incorrect Password or Email!")
